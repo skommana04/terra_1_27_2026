@@ -34,7 +34,7 @@ data "aws_subnets" "public" {
 data "aws_subnets" "private" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.vpc_id]
+    values = [data.aws_vpc.vpc.id]
   }
   filter {
     name   = "tag:Type"
@@ -45,7 +45,7 @@ data "aws_subnets" "private" {
 data "aws_route_tables" "public_rt" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.vpc_id]
+    values = [data.aws_vpc.vpc.id]
   }
   filter {
     name   = "tag:Type"
