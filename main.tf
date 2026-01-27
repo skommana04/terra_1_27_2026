@@ -10,3 +10,93 @@ terraform {
     region       = "us-east-1"
   }
 }
+data "aws_vpc" "vpc" {
+  id = var.vpc_id
+}
+
+data "aws_internet_gateway" "igw" {
+  filter {
+    name   = "attachment.vpc-id"
+    values = [var.vpc_id]
+  }
+}
+data "aws-subnets" "public" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+  filter {
+    name   = "tag:Type"
+    values = ["public"]
+  }
+}
+
+data "aws-subnets" "private" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc_id]
+  }
+  filter {
+    name   = "tag:Type"
+    values = ["private"]
+  }
+}
+
+data "aws_route_tables" "public_rt" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc_id]
+  }
+  filter {
+    name   = "tag:Type"
+    values = ["public"]
+  }
+}
+
+data "aws_security_group" "sg" {
+  vpc_id = data.aws_vpc.vpc.id
+
+  filter {
+    name   = "tag:Name"
+    values = ["Allow-all"]
+
+  }
+}
+
+resource "aws_instance" "instance1" {
+  ami           = "ami-0b6c6ebed2801a5cb" # Replace with your AMI
+  instance_type = "t3.medium"
+
+  # Pick the first public subnet (or choose based on AZ)
+  subnet_id = data.aws_subnets.public.ids[0]
+
+  # Security group
+  vpc_security_group_ids = [data.aws_security_group.sg.id]
+
+  associate_public_ip_address = true # Needed for public subnet
+
+  user_data = file("./userdata-master.sh")
+
+  tags = {
+    Name = "Jenkins1"
+  }
+}
+
+resource "aws_instance" "instance2" {
+  ami           = "ami-0b6c6ebed2801a5cb" # Replace with your AMI
+  instance_type = "t3.medium"
+
+  # Pick the first public subnet (or choose based on AZ)
+  subnet_id = data.aws_subnets.public.ids[1]
+
+  # Security group
+  vpc_security_group_ids = [data.aws_security_group.sg.id]
+
+  associate_public_ip_address = true # Needed for public subnet
+  user_data                   = file("./userdata-slave.sh")
+  tags = {
+    Name = "Jenkins2"
+  }
+}
+
+
