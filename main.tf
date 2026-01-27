@@ -20,7 +20,7 @@ data "aws_internet_gateway" "igw" {
     values = [var.vpc_id]
   }
 }
-data "aws-subnets" "public" {
+data "aws_subnets" "public" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.vpc.id]
@@ -31,7 +31,7 @@ data "aws-subnets" "public" {
   }
 }
 
-data "aws-subnets" "private" {
+data "aws_subnets" "private" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.vpc_id]
