@@ -66,6 +66,7 @@ data "aws_security_group" "sg" {
 resource "aws_instance" "instance1" {
   ami           = "ami-0b6c6ebed2801a5cb" # Replace with your AMI
   instance_type = "t3.medium"
+  key_name      = "mern-sai"
 
   # Pick the first public subnet (or choose based on AZ)
   subnet_id = data.aws_subnets.public.ids[0]
