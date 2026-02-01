@@ -64,8 +64,8 @@ data "aws_security_group" "sg" {
 }
 
 resource "aws_instance" "instance1" {
-  ami           = "ami-0b6c6ebed2801a5cb" # Replace with your AMI
-  instance_type = "t3.medium"
+  ami           = "ami-0220d79f3f480ecf5" # Replace with your AMI
+  instance_type = "t3.small"
   key_name      = "mern-sai"
 
   # Pick the first public subnet (or choose based on AZ)
@@ -89,8 +89,8 @@ resource "aws_instance" "instance1" {
 }
 
 resource "aws_instance" "instance2" {
-  ami           = "ami-0b6c6ebed2801a5cb" # Replace with your AMI
-  instance_type = "t3.medium"
+  ami           = "ami-0220d79f3f480ecf5" # Replace with your AMI
+  instance_type = "t3.small"
 
   # Pick the first public subnet (or choose based on AZ)
   subnet_id = data.aws_subnets.public.ids[1]
