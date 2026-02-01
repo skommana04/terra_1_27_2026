@@ -77,9 +77,14 @@ resource "aws_instance" "instance1" {
   associate_public_ip_address = true # Needed for public subnet
 
   user_data = file("./userdata-master.sh")
+  root_block_device {
+    volume_size           = 50
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
 
   tags = {
-    Name = "Jenkins1"
+    Name = "Jenkins-Master"
   }
 }
 
@@ -95,8 +100,17 @@ resource "aws_instance" "instance2" {
 
   associate_public_ip_address = true # Needed for public subnet
   user_data                   = file("./userdata-slave.sh")
+
+  root_block_device {
+    volume_size           = 50
+    volume_type           = "gp3"
+    delete_on_termination = true
+
+  }
+
+
   tags = {
-    Name = "Jenkins2"
+    Name = "Jenkins-slave1"
   }
 }
 
