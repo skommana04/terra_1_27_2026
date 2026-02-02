@@ -63,20 +63,25 @@ data "aws_security_group" "sg" {
   }
 }
 
+resource "aws_route_table_association" "public_assoc_1" {
+  subnet_id      = data.aws_subnets.public.ids[0]
+  route_table_id = data.aws_route_tables.public_rt.ids[0]
+}
+
+resource "aws_route_table_association" "public_assoc_2" {
+  subnet_id      = data.aws_subnets.public.ids[1]
+  route_table_id = data.aws_route_tables.public_rt.ids[0]
+}
+
+
 resource "aws_instance" "instance1" {
-  ami           = "ami-0220d79f3f480ecf5" # Replace with your AMI
-  instance_type = "t3.small"
-  key_name      = "mern-sai"
-
-  # Pick the first public subnet (or choose based on AZ)
-  subnet_id = data.aws_subnets.public.ids[0]
-
-  # Security group
-  vpc_security_group_ids = [data.aws_security_group.sg.id]
-
+  ami                         = "ami-0220d79f3f480ecf5" # Replace with your AMI
+  instance_type               = "t3.small"
+  key_name                    = "mern-sai"
+  subnet_id                   = data.aws_subnets.public.ids[0]
+  vpc_security_group_ids      = [data.aws_security_group.sg.id]
   associate_public_ip_address = true # Needed for public subnet
-
-  user_data = file("./userdata-master.sh")
+  user_data                   = file("./userdata-master.sh")
   root_block_device {
     volume_size           = 50
     volume_type           = "gp3"
