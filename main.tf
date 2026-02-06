@@ -119,4 +119,24 @@ resource "aws_instance" "instance2" {
   }
 }
 
+data "aws_route53_zone" "hostedzone" {
+  name         = "saidevops.site."
+  private_zone = false
+}
+
+resource "aws_route53_record" "master" {
+  zone_id = data.aws_route53_zone.hostedzone.zone_id
+  name    = "jenkins.saidevops.site"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.instance1.public_ip]
+}
+
+resource "aws_route53_record" "slave" {
+  zone_id = data.aws_route53_zone.hostedzone.zone_id
+  name    = "jenkins-agent.saidevops.site"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.instance2.private_ip]
+}
 
